@@ -1,0 +1,12 @@
+static immutable x = 42;
+
+void main (in char[] args)
+{
+    static immutable y = 43;
+}
+
+struct S
+{
+    // test that const is converted to enum within struct
+    enum z = 44;
+}

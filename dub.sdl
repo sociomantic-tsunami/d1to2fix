@@ -1,0 +1,19 @@
+name        "d1to2fix"
+description "Tool to simplify D1 to D2 migration"
+copyright   "Copyright © 2014, Sociomantic Labs"
+authors     "Brian Schott" "Mihails Strasuns"
+license     "Boost Software License - Version 1.0"
+
+// dependency frozen as a workaround for a libdparse regression until lidparse
+// with https://github.com/Hackerpilot/libdparse/pull/103 is released
+dependency "libdparse" version="==0.5.0"
+
+subPackage {
+    name                "unittests"
+    dflags              "-main"
+    buildOptions        "unittests"
+    targetType          "executable"
+    excludedSourceFiles "source/d1to2fix/main.d"
+
+    dependency "libdparse" version="==0.5.0"
+}
