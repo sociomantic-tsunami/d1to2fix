@@ -1,4 +1,4 @@
-#!/usr/bin/rdmd
+module test.snippets.main;
 
 int main()
 {
@@ -11,8 +11,9 @@ int main()
     foreach (entry; dirEntries("./tests", "*.d", SpanMode.depth))
     {
         writefln("Testing '%s'", entry);
-        auto ret = executeShell("./d1to2fix --stdout " ~ entry);
-        enforce(ret.status == 0);
+        auto cmd = "./build/last/bin/d1to2fix --stdout " ~ entry;
+        auto ret = executeShell(cmd);
+        enforce(ret.status == 0, cmd);
 
         auto expected = entry ~ ".expected";
 

@@ -1,0 +1,9 @@
+[submodule "libdparse"]
+	path = submodules/libdparse
+	url = git@github.com:Hackerpilot/libdparse.git
+[submodule "experimental_allocator"]
+	path = submodules/experimental_allocator
+	url = git@github.com:Hackerpilot/experimental_allocator.git
+[submodule "makd"]
+	path = submodules/makd
+	url = git@github.com:sociomantic-tsunami/makd.git

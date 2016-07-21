@@ -1,7 +1,2 @@
-/d1to2fix*
-.dub/
-docs.json
-__dummy.html
-*.o
-*.obj
+build/
 deb/*.deb
