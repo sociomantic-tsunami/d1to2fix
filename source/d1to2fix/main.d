@@ -198,7 +198,8 @@ bool upgradeFile ( string fileName, ubyte[] input, File output )
             stderr.writefln("%s(%d:%d)[error]: %s", file, line, column, message);
     }
 
-    auto ast = parseModule(parsed, fileName, null, &report, &errors);
+    import dparse.rollback_allocator;
+    auto ast = parseModule(parsed, fileName, new RollbackAllocator, &report, &errors);
 
     if (errors)
     {
