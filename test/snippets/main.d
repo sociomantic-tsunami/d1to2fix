@@ -6,24 +6,29 @@ int main()
     import std.process;
     import std.exception : enforce;
     import std.stdio : writefln, writeln;
-    import std.algorithm : joiner;
+    import std.algorithm : joiner, map, filter;
+    import std.array;
 
-    foreach (entry; dirEntries("./tests", "*.d", SpanMode.depth))
+    string[] sources = dirEntries("./tests", "*.d", SpanMode.depth)
+        .filter!(entry => entry.isFile)
+        .map!(entry => entry.name)
+        .array();
+
+    // convert all snippets at once for performance
+    auto cmd = "./build/last/bin/d1to2fix -o .converted " ~ sources.join(" ");
+    auto ret = executeShell(cmd);
+    enforce(ret.status == 0, cmd);
+
+    foreach (entry; sources)
     {
-        writefln("Testing '%s'", entry);
-        auto cmd = "./build/last/bin/d1to2fix --stdout " ~ entry;
-        auto ret = executeShell(cmd);
-        enforce(ret.status == 0, cmd);
-
         auto expected = entry ~ ".expected";
+        auto converted = entry ~ ".converted";
 
-        if (ret.output != readText(expected))
+        if (readText(converted) != readText(expected))
         {
             writefln("[%s] converted code doesn't match expected one.", entry);
 
-            auto diff = pipeShell("diff -y - " ~ expected);
-            diff.stdin().writeln(ret.output);
-            diff.stdin().close();
+            auto diff = pipeShell("diff -y " ~ converted ~ " " ~ expected);
             enforce(wait(diff.pid) == 1);
             writeln(diff.stderr.byLine().joiner("\n"));
             writeln(diff.stdout.byLine().joiner("\n"));
@@ -31,8 +36,6 @@ int main()
             return -1;
         }
     }
-
-    writefln("All tests have passed");
 
     return 0;
 }
