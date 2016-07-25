@@ -16,7 +16,7 @@ void foo5(.Something.Identity!(int) delegate(int, void) dg) {}
 /// Nested are *not* processed
 void foo6(.Something.Identity!(int) delegate(.Something.Identity!(void*) delegate()) dg) {}
 
-/// Aliases are processed
+/// Aliases are *not* processed (it has no effect at functions using them)
 public alias size_t delegate (Const!(T)[]) Sink;
 public alias size_t delegate (T[]) MutableSink;
 

@@ -169,17 +169,6 @@ public final class TokenMappingVisitor : ASTVisitor
         }
     }
 
-    public override void visit (const AliasDeclaration node)
-    {
-        // Aliases to delegate types also need to be converted
-
-        if (node.type)
-        {
-            this.checkDelegate(node.type, Token.init);
-        }
-        super.visit(node);
-    }
-
     /*
         helper methods
      */
