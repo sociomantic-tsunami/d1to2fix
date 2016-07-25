@@ -49,6 +49,12 @@ struct Config
     bool fatal;
 
     /**
+        Arrays of import paths to be scanned to build initial module
+        cache used later during conversion stage for resolving symbols.
+     **/
+    string[] importPaths;
+
+    /**
         Initializes configuration, removes processed configuration
         arguments from the array.
 
@@ -70,7 +76,9 @@ struct Config
                 " output. If empty, convertion will be done in-place",
                 &this.suffix,
             "f|fatal", "Terminate d1to2fix immediately if conversion of any" ~
-                " single file fails", &this.fatal
+                " single file fails", &this.fatal,
+            "I|import",       "Build symbol cache for all module under the import path",
+                &this.importPaths
         );
     }
 }
@@ -101,6 +109,17 @@ int main ( string[] args )
             " conversion has to be done in parallel");
         return 1;
     }
+
+    // disable all warnings from dsymbol
+
+    import std.experimental.logger;
+    globalLogLevel = LogLevel.error;
+
+    // Build symbol cache for parsed modules
+
+    import d1to2fix.symbolsearch;
+    config.importPaths ~= "/usr/include/d2/dmd-transitional/";
+    initializeModuleCache(config.importPaths);
 
     // Converting each file is 100% independent from others and can be done
     // in parallel with multiple threads

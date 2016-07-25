@@ -173,11 +173,66 @@ public final class TokenMappingVisitor : ASTVisitor
         helper methods
      */
 
+    private size_t calculateIndex ( const Type type )
+    {
+        auto t2 = type.type2;
+        // If it's a builtin type (type is irrelevant)
+        if (t2.builtinType != 0)
+        {
+            auto idx = getTokIndex(type.typeSuffixes[0]
+                                   .delegateOrFunction.index);
+            this.assert_(isBasicType(this.tokens[idx - 1].type),
+                         "Expected a builtin type", this.tokens[idx -1]);
+
+            return this.tokens[idx - 1].index;
+        }
+        else if (t2.symbol
+                 && t2.symbol.identifierOrTemplateChain
+                 && t2.symbol.identifierOrTemplateChain
+                    .identifiersOrTemplateInstances.length)
+        {
+            // It's either an identifier or a template instance
+            auto ioti = t2.symbol.identifierOrTemplateChain
+                .identifiersOrTemplateInstances[0];
+            // If there is, it CAN have a leading dot...
+            ubyte decr = t2.symbol.dot ? 1 : 0;
+            // Definitely an identifier
+            if (ioti.identifier.type != 0)
+                return ioti.identifier.index - decr;
+            else
+                return ioti.templateInstance.identifier.index - decr;
+        }
+        else
+            return 0;
+    }
+
     // If the node has a delegate, add the index at which to place
     // the `scope` to `this.token_mappings.scope_delegates`
     private void checkDelegate (const Type type, Token token)
     {
         assert(type !is null, "Null type passed to checkDelegate");
+
+        if (type.type2.symbol !is null)
+        {
+            import std.range : join;
+            import std.algorithm : map;
+
+            auto name =
+                type.type2.symbol.identifierOrTemplateChain.identifiersOrTemplateInstances
+                .map!(x => x.identifier.text)
+                .join(".");
+
+            import d1to2fix.symbolsearch;
+            import dsymbol.symbol;
+
+            auto sym = delegateAliasSearch(name);
+
+            if (sym)
+            {
+                this.token_mappings.scope_delegates.add(this.calculateIndex(type));
+                return;
+            }
+        }
 
         // The return type is in 'type2', and the delegate information in
         // typesuffix.
@@ -188,41 +243,7 @@ public final class TokenMappingVisitor : ASTVisitor
         {
             // Found a delegate, now we need the index at which
             // to place the 'scope'...
-
-            auto t2 = type.type2;
-            // If it's a builtin type (type is irrelevant)
-            if (t2.builtinType != 0)
-            {
-                auto idx = getTokIndex(type.typeSuffixes[0]
-                                       .delegateOrFunction.index);
-                this.assert_(isBasicType(this.tokens[idx - 1].type),
-                             "Expected a builtin type", this.tokens[idx -1]);
-
-                this.token_mappings.scope_delegates.add(this.tokens[idx - 1].index);
-            }
-            else if (t2.symbol
-                     && t2.symbol.identifierOrTemplateChain
-                     && t2.symbol.identifierOrTemplateChain
-                        .identifiersOrTemplateInstances.length)
-            {
-                // It's either an identifier or a template instance
-                auto ioti = t2.symbol.identifierOrTemplateChain
-                    .identifiersOrTemplateInstances[0];
-                // If there is, it CAN have a leading dot...
-                ubyte decr = t2.symbol.dot ? 1 : 0;
-                // Definitely an identifier
-                if (ioti.identifier.type != 0)
-                {
-                    this.token_mappings.scope_delegates.add(ioti.identifier.index - decr);
-                }
-                else
-                {
-                    this.assert_(ioti.templateInstance !is null,
-                                 "Template instance expected", token);
-                    this.token_mappings.scope_delegates.add(
-                        ioti.templateInstance.identifier.index - decr);
-                }
-            }
+            this.token_mappings.scope_delegates.add(this.calculateIndex(type));
         }
     }
 

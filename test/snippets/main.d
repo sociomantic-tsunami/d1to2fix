@@ -15,7 +15,7 @@ int main()
         .array();
 
     // convert all snippets at once for performance
-    auto cmd = "./build/last/bin/d1to2fix -o .converted " ~ sources.join(" ");
+    auto cmd = "./build/last/bin/d1to2fix -o .converted -I./tests/ " ~ sources.join(" ");
     auto ret = executeShell(cmd);
     enforce(ret.status == 0, cmd);
 

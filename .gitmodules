@@ -7,3 +7,9 @@
 [submodule "makd"]
 	path = submodules/makd
 	url = git@github.com:sociomantic-tsunami/makd.git
+[submodule "dsymbol"]
+	path = submodules/dsymbol
+	url = git@github.com:Hackerpilot/dsymbol.git
+[submodule "emsi_container"]
+	path = submodules/emsi_containers
+	url = git@github.com:economicmodeling/containers.git

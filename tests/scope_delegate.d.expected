@@ -1,3 +1,6 @@
+// define some symbols for dsymbol semantic analysis to work
+template Const ( T ) { alias void T; }
+
 // Basic type
 void foo(scope int delegate() dg) {}
 
@@ -25,5 +28,4 @@ public class Foobar
     this (scope void delegate () dg) {}
 }
 
-// `scope` STC is ignored on `alias`, so the user might need to manually add it
 public void write (scope Sink sink, in char[] data) {}
