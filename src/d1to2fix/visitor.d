@@ -169,10 +169,63 @@ public final class TokenMappingVisitor : ASTVisitor
         }
     }
 
-    /*
-        helper methods
-     */
+    /**
+        If the node has a delegate, add the index at which to place
+        the `scope` to `this.token_mappings.scope_delegates`
 
+        Params:
+            type = parameter type
+            token = parameter name token
+    **/
+    private void checkDelegate (const Type type, Token token)
+    {
+        assert(type !is null, "Null type passed to checkDelegate");
+
+        // Check "plain" delegates.
+        //
+        // The return type is in 'type2', and the delegate information in
+        // typesuffix. The conditions below are simplified, as we're in D1
+        // and thus don't have to care about inout, const, immutable or shared.
+        if (type.typeSuffixes.length
+            && type.typeSuffixes[0].delegateOrFunction == tok!"delegate")
+        {
+            // Found a delegate, now we need the index at which
+            // to place the 'scope'...
+            this.token_mappings.scope_delegates.add(this.calculateIndex(type));
+        }
+        // Check aliased delegate.
+        //
+        // Does global lookup among known aliases using unqualified parameter type
+        // name which may result in false positivies unless all delegate aliases
+        // have unique names.
+        else if (type.type2.symbol !is null)
+        {
+            import std.range : join;
+            import std.algorithm : map;
+
+            auto name =
+                type.type2.symbol.identifierOrTemplateChain.identifiersOrTemplateInstances
+                .map!(x => x.identifier.text)
+                .join(".");
+
+            import d1to2fix.symbolsearch;
+            import dsymbol.symbol;
+
+            auto sym = delegateAliasSearch(name);
+
+            if (sym)
+                this.token_mappings.scope_delegates.add(this.calculateIndex(type));
+        }
+    }
+
+    /**
+        Params:
+            type = parameter type to inject `scope` before
+
+        Returns:
+            Index in token sequence where `scope` keyword needs to be inserted
+            so that it will be placed before delegate parameter declaration.
+    **/
     private size_t calculateIndex ( const Type type )
     {
         auto t2 = type.type2;
@@ -206,50 +259,14 @@ public final class TokenMappingVisitor : ASTVisitor
             return 0;
     }
 
-    // If the node has a delegate, add the index at which to place
-    // the `scope` to `this.token_mappings.scope_delegates`
-    private void checkDelegate (const Type type, Token token)
-    {
-        assert(type !is null, "Null type passed to checkDelegate");
+    /**
+        Params:
+            globalIndex = index in the parsed file
 
-        if (type.type2.symbol !is null)
-        {
-            import std.range : join;
-            import std.algorithm : map;
-
-            auto name =
-                type.type2.symbol.identifierOrTemplateChain.identifiersOrTemplateInstances
-                .map!(x => x.identifier.text)
-                .join(".");
-
-            import d1to2fix.symbolsearch;
-            import dsymbol.symbol;
-
-            auto sym = delegateAliasSearch(name);
-
-            if (sym)
-            {
-                this.token_mappings.scope_delegates.add(this.calculateIndex(type));
-                return;
-            }
-        }
-
-        // The return type is in 'type2', and the delegate information in
-        // typesuffix.
-        // The conditions below are simplified, as we're in D1 and thus don't
-        // have to care about inout, const, immutable or shared.
-        if (type.typeSuffixes.length
-            && type.typeSuffixes[0].delegateOrFunction == tok!"delegate")
-        {
-            // Found a delegate, now we need the index at which
-            // to place the 'scope'...
-            this.token_mappings.scope_delegates.add(this.calculateIndex(type));
-        }
-    }
-
-    /// Turns a 'global' index (into the file) into a 'local' one
-    /// (an index into the array of parser tokens) so that we can
-    /// get the previous token.
+        Returns:
+            Index into the array of parser tokens that matches
+            globalIndex
+    **/
     private size_t getTokIndex (size_t globalIndex)
     {
         foreach (idx, t; this.tokens)
@@ -260,7 +277,9 @@ public final class TokenMappingVisitor : ASTVisitor
         assert(0);
     }
 
-    /// Provide informative error message
+    /*
+        Provide informative error message
+     */
     private void assert_ (bool cond, string msg, Token tok)
     {
         if (!cond)
