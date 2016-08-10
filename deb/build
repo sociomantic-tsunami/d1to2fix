@@ -37,5 +37,4 @@ fpm -f -s dir -t deb -n "$pkgname" -v "$pkgversion" \
 	--deb-suggests dmd1 \
 	--deb-suggests dmd \
 	--deb-changelog "$changelog" \
-	../d1to2fix=/usr/bin/d1to2fix
-
+	../build/last/bin/d1to2fix=/usr/bin/d1to2fix

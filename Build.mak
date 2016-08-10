@@ -17,3 +17,7 @@ all += $B/d1to2fix
 
 $O/%unittests: override LDFLAGS += -L$B -lstdextra
 $O/%unittests: $B/libstdextra.a
+
+.PHONY: deb
+deb:
+	./deb/build
