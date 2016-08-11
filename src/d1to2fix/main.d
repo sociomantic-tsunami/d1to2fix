@@ -133,10 +133,15 @@ int main ( string[] args )
         import std.array : uninitializedArray;
         import std.stdio : File;
 
-        File input = File(fileName, "rb");
-        ubyte[] inputBytes = uninitializedArray!(ubyte[])(input.size);
-        input.rawRead(inputBytes);
-        input.close();
+        ubyte[] inputBytes;
+
+        {
+            File input = File(fileName, "rb");
+            scope(exit)
+                input.close();
+            inputBytes = uninitializedArray!(ubyte[])(input.size);
+            input.rawRead(inputBytes);
+        }
 
         File output;
         scope(exit)
