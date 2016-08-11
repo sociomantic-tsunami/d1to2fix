@@ -139,6 +139,10 @@ int main ( string[] args )
             File input = File(fileName, "rb");
             scope(exit)
                 input.close();
+
+            if (input.size == 0)
+                continue;
+
             inputBytes = uninitializedArray!(ubyte[])(input.size);
             input.rawRead(inputBytes);
         }
