@@ -38,7 +38,10 @@ public void initializeModuleCache(string[] paths)
     import std.exception;
     enforce(delegate_cache is null);
 
-    auto module_cache = new ModuleCache(new ASTAllocator);
+    // static is used so that pointer persists and GC won't collect it
+    // together with underlying owned dsymbols
+    static ModuleCache* module_cache;
+    module_cache = new ModuleCache(new ASTAllocator);
     module_cache.addImportPaths(paths);
 
     const(DSymbol)*[string] delegates;
