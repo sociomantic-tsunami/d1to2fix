@@ -55,6 +55,12 @@ struct Config
     string[] importPaths;
 
     /**
+        If not empty, contains path to file which contains list of
+        file to convert (newline separated).
+     **/
+    string inputListFile;
+
+    /**
         Initializes configuration, removes processed configuration
         arguments from the array.
 
@@ -77,8 +83,10 @@ struct Config
                 &this.suffix,
             "f|fatal", "Terminate d1to2fix immediately if conversion of any" ~
                 " single file fails", &this.fatal,
-            "I|import",       "Build symbol cache for all module under the import path",
-                &this.importPaths
+            "I|import", "Build symbol cache for all module under the import path",
+                &this.importPaths,
+            "input", "Path to file containing newline-separated file paths to convert",
+                &this.inputListFile
         );
     }
 }
@@ -95,7 +103,8 @@ int main ( string[] args )
     Config config;
     auto parsed_args = config.initFromArgs(args);
 
-    if (parsed_args.helpWanted || args.length < 2)
+    if (   parsed_args.helpWanted
+        || (args.length < 2 && config.inputListFile.length == 0))
     {
         import std.getopt : defaultGetoptPrinter;
         defaultGetoptPrinter("d1to2fix [OPTIONS] [FILES]",
@@ -109,6 +118,24 @@ int main ( string[] args )
             " conversion has to be done in parallel");
         return 1;
     }
+
+    // Get file name list to convert
+
+    import std.algorithm : splitter, filter;
+    import std.array;
+    import std.file : readText;
+
+    string[] fileNames;
+
+    if (config.inputListFile.length != 0)
+    {
+        fileNames = readText(config.inputListFile)
+            .splitter("\n")
+            .filter!(s => s.length)
+            .array();
+    }
+
+    fileNames ~= args[1 .. $];
 
     // disable all warnings from dsymbol
 
@@ -133,7 +160,7 @@ int main ( string[] args )
 
     bool success = true;
 
-    foreach (fileName; parallel(args[1 .. $]))
+    foreach (fileName; parallel(fileNames))
     {
         import std.array : uninitializedArray;
         import std.stdio : File;
