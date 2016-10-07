@@ -117,6 +117,11 @@ int main ( string[] args )
 
     // Build symbol cache for parsed modules
 
+    // For now import paths to runtime and standard library are hard-coded
+    // because there is no clear place where such configuration can be placed.
+    // Eventually it may be worth to find and parse `dmd.conf` file to
+    // figure it out
+
     import d1to2fix.symbolsearch;
     config.importPaths ~= "/usr/include/d2/dmd-transitional/";
     initializeModuleCache(config.importPaths);
