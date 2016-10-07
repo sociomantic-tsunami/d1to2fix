@@ -11,17 +11,10 @@
 
 module d1to2fix.symbolsearch;
 
-/******************************************************************************
-
-    Imports
-
-******************************************************************************/
-
 import dsymbol.modulecache;
 import dsymbol.symbol;
 
-/******************************************************************************
-
+/**
     Initializes module cache and all derived facilities by parsing all
     modules that can be found under specified import paths.
 
@@ -30,8 +23,7 @@ import dsymbol.symbol;
 
     Params:
         paths = array of import paths to scan
-
-******************************************************************************/
+ **/
 
 public void initializeModuleCache(string[] paths)
 {
@@ -83,8 +75,7 @@ public void initializeModuleCache(string[] paths)
     delegate_cache = new shared DelegateCache(cast(immutable) delegates);
 }
 
-/******************************************************************************
-
+/**
     Tries to find alias declaration with given (unqualified) name that
     resolves to delegate type.
 
@@ -97,20 +88,17 @@ public void initializeModuleCache(string[] paths)
     Returns:
         pointer to matching D symbol if there is a delegate alias with such
         name in scanned code base
-
-******************************************************************************/
+ **/
 
 public const(DSymbol)* delegateAliasSearch(string symbolName)
 {
     return delegate_cache.search(symbolName);
 }
 
-/******************************************************************************
-
+/**
     Wraps name to DSymbol associative array so that it can be allocated
     on heap as shared entity.
-
-******************************************************************************/
+ **/
 
 private struct DelegateCache
 {
@@ -125,10 +113,9 @@ private struct DelegateCache
     }
 }
 
-/******************************************************************************
-
+/**
     Immutable/shared cache of found delegate type aliases
 
-******************************************************************************/
+ **/
 
 private shared immutable(DelegateCache)* delegate_cache;
