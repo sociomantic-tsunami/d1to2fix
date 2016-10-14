@@ -11,7 +11,8 @@ int main()
 
     auto sources = dirEntries("./tests", "*.d", SpanMode.depth)
         .filter!(entry => entry.isFile)
-        .map!(entry => entry.name);
+        .map!(entry => entry.name)
+        .array();
 
     enum TMP_FILE = "./build/last/tmp/test_snippets.list";
     write(TMP_FILE, sources.join("\n"));
