@@ -150,7 +150,15 @@ int main ( string[] args )
     // figure it out
 
     import d1to2fix.symbolsearch;
-    config.importPaths ~= "/usr/include/d2/dmd-transitional/";
+    import std.file : exists;
+
+    if (exists("/usr/include/d2/dmd-transitional"))
+        config.importPaths ~= "/usr/include/d2/dmd-transitional/";
+    else if (exists("/usr/include/dmd/druntime/import"))
+        config.importPaths ~= "/usr/include/dmd/druntime/import/";
+    else if (exists("/usr/include/dlang/dmd"))
+        config.importPaths ~= "/usr/include/dlang/dmd/";
+
     initializeModuleCache(config.importPaths);
 
     // Converting each file is 100% independent from others and can be done
