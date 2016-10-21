@@ -58,10 +58,10 @@ public void initializeModuleCache(string[] paths)
             // them for now and only checking modules/packages:
 
             if (   symbol.kind == CompletionKind.moduleName
-                || symbol.kind == CompletionKind.packageName)
-             // || symbol.kind == CompletionKind.structName
-             // || symbol.kind == CompletionKind.interfaceName
-             // || symbol.kind == CompletionKind.className)
+                || symbol.kind == CompletionKind.packageName
+                || symbol.kind == CompletionKind.structName
+                || symbol.kind == CompletionKind.interfaceName
+                || symbol.kind == CompletionKind.className)
             {
                 collectNames((*symbol)[]);
             }

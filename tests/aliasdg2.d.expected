@@ -1,0 +1,6 @@
+struct S
+{
+    alias void delegate ( int ) SomeDg;
+}
+
+void foo ( scope S.SomeDg dg1, scope S.SomeDg d2 );

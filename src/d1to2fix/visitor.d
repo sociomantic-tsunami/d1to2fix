@@ -200,13 +200,15 @@ public final class TokenMappingVisitor : ASTVisitor
         // have unique names.
         else if (type.type2.symbol !is null)
         {
-            import std.range : join;
+            import std.array;
             import std.algorithm : map;
 
-            auto name =
-                type.type2.symbol.identifierOrTemplateChain.identifiersOrTemplateInstances
-                .map!(x => x.identifier.text)
-                .join(".");
+            // use unqualified symbol name for lookup - our delegate names are
+            // usually uniquely named and dsymbol is not well-suited for task
+            // of finding fully qualified names
+
+            auto name = type.type2.symbol.identifierOrTemplateChain
+                .identifiersOrTemplateInstances[$-1].identifier.text;
 
             import d1to2fix.symbolsearch;
             import dsymbol.symbol;
