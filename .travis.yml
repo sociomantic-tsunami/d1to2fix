@@ -1,0 +1,12 @@
+language: d
+
+sudo: required
+
+services:
+    - docker
+
+before_install:
+    - docker build -t sociomantic-tsunami/d1to2fix docker
+
+script:
+    - docker run -ti --rm -v $PWD:/docker -w /docker sociomantic-tsunami/d1to2fix docker/travis.sh
