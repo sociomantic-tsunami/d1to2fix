@@ -23,9 +23,10 @@ import dsymbol.symbol;
 
     Params:
         paths = array of import paths to scan
+        max_depth = max allowed recursion depth of symbol analysis
  **/
 
-public void initializeModuleCache(string[] paths)
+public void initializeModuleCache(string[] paths, long max_depth)
 {
     import std.exception;
     enforce(delegate_cache is null);
@@ -40,6 +41,14 @@ public void initializeModuleCache(string[] paths)
 
     void collectNames (const(DSymbol*)[] symbols)
     {
+        static long depth;
+        ++depth;
+        scope(exit)
+            --depth;
+
+        if (depth > max_depth)
+            throw new SymbolSearchRecursionError;
+
         foreach (symbol; symbols)
         {
             // dsymbol tracks both delegates and lambdas as "function" thus
@@ -63,7 +72,15 @@ public void initializeModuleCache(string[] paths)
                 || symbol.kind == CompletionKind.interfaceName
                 || symbol.kind == CompletionKind.className)
             {
-                collectNames((*symbol)[]);
+                try
+                {
+                    collectNames((*symbol)[]);
+                }
+                catch (SymbolSearchRecursionError e)
+                {
+                    e.add(symbol.name ~ "@" ~ symbol.symbolFile);
+                    throw e;
+                }
             }
         }
     }
@@ -119,3 +136,47 @@ private struct DelegateCache
  **/
 
 private shared immutable(DelegateCache)* delegate_cache;
+
+/**
+    Error thrown when max allowed recursion depth is reached.
+
+    Tracks symbol names and locations that have resulted in that call
+    stack. Only tracks most deep 20 symbols in the stack for better
+    readability.
+ **/
+class SymbolSearchRecursionError : Error
+{
+    private
+    {
+        string[] backtrace;
+
+        this ( string file = __FILE__, int line = __LINE__ )
+        {
+            super("Soft recursion limit for symbol search has been reached.",
+                file, line);
+        }
+
+        void add (string line)
+        {
+            if (this.backtrace.length < 20)
+                this.backtrace ~= line;
+        }
+    }
+
+    override void toString(scope void delegate(in char[]) sink) const
+    {
+        import std.format;
+
+        formattedWrite(
+            sink,
+            "%s@(%s:%s): %s\nStack of last checked symbols:\n",
+            typeid(this).name, this.file, this.line, this.msg
+        );
+
+        foreach(line; this.backtrace)
+        {
+            sink(line);
+            sink("\n");
+        }
+    }
+}

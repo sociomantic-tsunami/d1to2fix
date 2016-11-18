@@ -61,6 +61,10 @@ struct Config
     string inputListFile;
 
     /**
+     **/
+    long maxRecursionDepth = 5000;
+
+    /**
         Initializes configuration, removes processed configuration
         arguments from the array.
 
@@ -86,7 +90,9 @@ struct Config
             "I|import", "Build symbol cache for all module under the import path",
                 &this.importPaths,
             "input", "Path to file containing newline-separated file paths to convert",
-                &this.inputListFile
+                &this.inputListFile,
+            "max-depth", "Maximum allowed recursion depth during symbol analysis",
+                &this.maxRecursionDepth,
         );
     }
 }
@@ -159,7 +165,7 @@ int main ( string[] args )
     else if (exists("/usr/include/dlang/dmd"))
         config.importPaths ~= "/usr/include/dlang/dmd/";
 
-    initializeModuleCache(config.importPaths);
+    initializeModuleCache(config.importPaths, config.maxRecursionDepth);
 
     // Converting each file is 100% independent from others and can be done
     // in parallel with multiple threads
