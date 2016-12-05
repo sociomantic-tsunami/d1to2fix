@@ -1,5 +1,3 @@
-language: d
-
 sudo: required
 
 services:
