@@ -2,4 +2,4 @@
 set -xe
 
 ./base.sh
-./dmd.sh
+./dmd.sh 2.071.2-0
