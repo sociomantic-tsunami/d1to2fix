@@ -1,4 +1,7 @@
 #!/bin/sh
 set -xe
 
-make F=production all test deb
+export F=production
+make all
+make test
+make deb
