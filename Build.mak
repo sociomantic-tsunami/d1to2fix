@@ -19,5 +19,5 @@ $O/%unittests: override LDFLAGS += -L$B -lstdextra
 $O/%unittests: $B/libstdextra.a
 
 .PHONY: deb
-deb:
+deb: $B/d1to2fix
 	./deb/build
