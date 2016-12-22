@@ -1,0 +1,18 @@
+OPTS = dict(
+    name = VAR.name,
+    description = "Tool to automatically port code from D1 to D2",
+    category = 'devel',
+    url = 'https://github.com/sociomantic-tsunami/d1to2fix',
+    maintainer = 'Leandro Lucarella <leandro.lucarella@sociomantic.com>',
+    vendor = 'Sociomantic Labs GmbH',
+    license = 'BSL-1.0',
+    deb_suggests = ['dmd-bin', 'dmd1'],
+)
+
+ARGS = [
+	"build/last/bin/d1to2fix=/usr/bin/d1to2fix",
+    "README.rst=/usr/share/doc/"+VAR.name+"/README.rst",
+    "LICENSE=/usr/share/doc/"+VAR.name+"/LICENSE",
+]
+
+# vim: set ft=python :

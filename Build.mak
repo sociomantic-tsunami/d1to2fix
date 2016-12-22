@@ -13,11 +13,9 @@ $B/d1to2fix: $B/libstdextra.a $C/src/d1to2fix/main.d
 
 all += $B/d1to2fix
 
+pkg: $B/d1to2fix README.rst LICENSE
+
 # test
 
 $O/%unittests: override LDFLAGS += -L$B -lstdextra
 $O/%unittests: $B/libstdextra.a
-
-.PHONY: deb
-deb: $B/d1to2fix
-	./deb/build
