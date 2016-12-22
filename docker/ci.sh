@@ -2,6 +2,6 @@
 set -xe
 
 export F=production
-make all
-make test
-make pkg
+make -r all
+make -r test
+make -r pkg
