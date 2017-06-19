@@ -1,10 +1,28 @@
-sudo: required
+# We will use docker to set up out environment, so don't use any particular
+# language in Travis itself
+language: generic
 
+# Enable docker
+sudo: required
 services:
     - docker
 
-before_install:
-    - docker build -t sociomantic-tsunami/d1to2fix docker
+# Disable automatic submodule fetching (it's done recursively)
+git:
+    submodules: false
 
-script:
-    - docker run -ti --rm -v $PWD:/docker -w /docker sociomantic-tsunami/d1to2fix docker/travis.sh
+# Do a shallow submodule fetch
+before_install: git submodule update --init
+
+env:
+    global:
+        # Make sure beaver is in the PATH
+        - PATH="$(git config -f .gitmodules submodule.beaver.path)/bin:$PATH"
+    matrix:
+        - DIST=trusty
+        - DIST=xenial
+
+install: beaver install
+
+script: beaver make F=production all test pkg
+

@@ -13,3 +13,6 @@
 [submodule "emsi_container"]
 	path = submodules/emsi_containers
 	url = https://github.com/economicmodeling/containers.git
+[submodule "beaver"]
+	path = submodules/beaver
+	url = https://github.com/sociomantic-tsunami/beaver.git
