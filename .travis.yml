@@ -26,3 +26,10 @@ install: beaver install
 
 script: beaver make F=production all test pkg
 
+deploy:
+    provider: script
+    script: beaver bintray upload -d sociomantic-tsunami/dlang/d1to2fix
+            build/last/pkg/*.deb
+    skip_cleanup: true
+    on:
+        tags: true
