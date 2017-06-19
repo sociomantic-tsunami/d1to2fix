@@ -13,7 +13,7 @@ $B/d1to2fix: $B/libstdextra.a $C/src/d1to2fix/main.d
 
 all += $B/d1to2fix
 
-pkg: $B/d1to2fix README.rst LICENSE
+$O/pkg-d1to2fix.stamp: $B/d1to2fix README.rst LICENSE
 
 # test
 
