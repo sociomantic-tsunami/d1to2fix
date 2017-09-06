@@ -1,6 +1,6 @@
 [submodule "libdparse"]
 	path = submodules/libdparse
-	url = https://github.com/Hackerpilot/libdparse.git
+	url = https://github.com/dlang-community/libdparse.git
 [submodule "experimental_allocator"]
 	path = submodules/experimental_allocator
 	url = https://github.com/Hackerpilot/experimental_allocator.git
@@ -9,7 +9,7 @@
 	url = https://github.com/sociomantic-tsunami/makd.git
 [submodule "dsymbol"]
 	path = submodules/dsymbol
-	url = https://github.com/Hackerpilot/dsymbol.git
+	url = https://github.com/dlang-community/dsymbol.git
 [submodule "emsi_container"]
 	path = submodules/emsi_containers
 	url = https://github.com/economicmodeling/containers.git
