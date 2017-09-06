@@ -261,7 +261,7 @@ bool upgradeFile ( string fileName, ubyte[] input, File output )
 
     uint errors;
 
-    static void report (string file, size_t line, size_t column,
+    void report (string file, size_t line, size_t column,
         string message, bool isError)
     {
         if (isError)

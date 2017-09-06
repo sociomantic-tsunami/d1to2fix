@@ -1,9 +1,6 @@
 [submodule "libdparse"]
 	path = submodules/libdparse
 	url = https://github.com/dlang-community/libdparse.git
-[submodule "experimental_allocator"]
-	path = submodules/experimental_allocator
-	url = https://github.com/Hackerpilot/experimental_allocator.git
 [submodule "makd"]
 	path = submodules/makd
 	url = https://github.com/sociomantic-tsunami/makd.git
