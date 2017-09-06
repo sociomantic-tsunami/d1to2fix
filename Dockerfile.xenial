@@ -1,3 +1,0 @@
-FROM sociomantictsunami/dlang:xenial-v2-test
-COPY docker/ /docker-tmp
-RUN /docker-tmp/build && rm -fr /docker-tmp

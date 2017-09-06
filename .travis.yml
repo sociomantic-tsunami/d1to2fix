@@ -19,12 +19,11 @@ env:
         # Make sure beaver is in the PATH
         - PATH="$(git config -f .gitmodules submodule.beaver.path)/bin:$PATH"
     matrix:
-        - DIST=trusty
-        - DIST=xenial
+        - DMD='2.070.2-*' DIST=xenial
 
-install: beaver install
+install: beaver dlang install
 
-script: beaver make F=production all test pkg
+script: beaver dlang make
 
 deploy:
     provider: script
