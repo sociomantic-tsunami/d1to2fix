@@ -11,24 +11,47 @@ services:
 git:
     submodules: false
 
+# Global environment variables
+env:
+    global:
+        - ARTIFACTS_DIR=build/travis-artifacts
+        - DIST=xenial
+        # Make sure beaver is in the PATH
+        - PATH="$(git config -f .gitmodules submodule.beaver.path)/bin:$PATH"
+
 # Do a shallow submodule fetch
 before_install: git submodule update --init
 
-env:
-    global:
-        # Make sure beaver is in the PATH
-        - PATH="$(git config -f .gitmodules submodule.beaver.path)/bin:$PATH"
-    matrix:
-        - DMD='2.078.3-*' DIST=xenial
-
+# Create docker images and setup environment to build
 install: beaver dlang install
 
-script: beaver dlang make
+# (Ab)use Travis cache to pass artifacts between stages.
+# As long as the environment variables of different stages match, travis will
+# pull the same "cache", so we can use this to actually pass artifacts between
+# stages.
+cache:
+    directories:
+        - $ARTIFACTS_DIR
 
-deploy:
-    provider: script
-    script: beaver bintray upload -d sociomantic-tsunami/dlang/d1to2fix
-            build/last/pkg/*.deb
-    skip_cleanup: true
-    on:
-        tags: true
+jobs:
+    templates:
+        - &test-matrix
+          stage: Test
+          script:
+              - beaver dlang make
+              - beaver dlang make pkg
+              # If this is a tag, save the packages in the cache directory so
+              # it's accessible in the Upload Package stage
+              - if test -n "$TRAVIS_TAG"; then
+                    cp -v build/last/pkg/*.deb "$ARTIFACTS_DIR/";
+                fi
+    include:
+        - <<: *test-matrix
+          env: DMD=2.078.* F=production
+
+        - stage: Upload Package
+          if: tag IS present
+          env: DMD=2.078.3-* F=production
+          script:
+              - beaver bintray upload -d sociomantic-tsunami/dlang/d1to2fix
+                "$ARTIFACTS_DIR"/*.deb
