@@ -101,6 +101,7 @@ struct Config
     Application entry point. Takes care of CLI interaction and all
     user-facing logic.
  **/
+version(unittest) {} else
 int main ( string[] args )
 {
     // All arguments that remain after configuration parsing are
