@@ -1,5 +1,5 @@
-OPTS = dict(
-    name = VAR.name,
+OPTS.update(
+    name = VAR.fullname,
     description = "Tool to automatically port code from D1 to D2",
     category = 'devel',
     url = 'https://github.com/sociomantic-tsunami/d1to2fix',
@@ -9,10 +9,10 @@ OPTS = dict(
     deb_suggests = ['dmd-bin', 'dmd1'],
 )
 
-ARGS = [
-	"build/last/bin/d1to2fix=/usr/bin/d1to2fix",
-    "README.rst=/usr/share/doc/"+VAR.name+"/README.rst",
-    "LICENSE=/usr/share/doc/"+VAR.name+"/LICENSE",
-]
+ARGS.extend([
+    "build/last/bin/d1to2fix=/usr/bin/d1to2fix",
+    "README.rst=/usr/share/doc/"+VAR.fullname+"/README.rst",
+    "LICENSE=/usr/share/doc/"+VAR.fullname+"/LICENSE",
+])
 
 # vim: set ft=python :
