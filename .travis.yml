@@ -19,7 +19,7 @@ env:
         # Make sure beaver is in the PATH
         - PATH="$(git config -f .gitmodules submodule.beaver.path)/bin:$PATH"
     matrix:
-        - DMD='2.071.2-*' DIST=xenial
+        - DMD='2.078.3-*' DIST=xenial
 
 install: beaver dlang install
 
