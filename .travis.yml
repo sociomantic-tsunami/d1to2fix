@@ -51,7 +51,7 @@ jobs:
 
         - stage: Upload Package
           if: tag IS present
-          env: DMD=2.078.3-* F=production
+          env: DMD=2.078.* F=production
           script:
               - beaver bintray upload -d sociomantic-tsunami/dlang/d1to2fix
                 "$ARTIFACTS_DIR"/*.deb
