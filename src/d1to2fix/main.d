@@ -104,6 +104,12 @@ struct Config
 version(unittest) {} else
 int main ( string[] args )
 {
+    // libdparse / dsymbol manual memory management doesn't play well with
+    // GC cleanup causing mysterious crashes upon application termination. There
+    // is never need to free memory in d1to2fix so better to just disable GC.
+    import core.memory;
+    GC.disable();
+
     // All arguments that remain after configuration parsing are
     // file names to convert
 
