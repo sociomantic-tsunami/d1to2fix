@@ -4,7 +4,7 @@
     mappings between language constructs that need to be converted and token
     indexes in the original lexed array.
 
-    Copyright: Copyright (c) 2016 Sociomantic Labs. All rights reserved
+    Copyright: Copyright (c) 2016 dunnhumby Germany GmbH. All rights reserved
 
     License: Boost Software License Version 1.0 (see LICENSE for details)
 

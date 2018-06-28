@@ -8,7 +8,7 @@
     - preserving struct/union "this" as a pointer
     - making all delegates scope
 
-    Copyright: Copyright (c) 2016 Sociomantic Labs. All rights reserved
+    Copyright: Copyright (c) 2016 dunnhumby Germany GmbH. All rights reserved
 
     License: Boost Software License Version 1.0 (see LICENSE for details)
 

@@ -4,7 +4,7 @@ OPTS.update(
     category = 'devel',
     url = 'https://github.com/sociomantic-tsunami/d1to2fix',
     maintainer = 'Leandro Lucarella <leandro.lucarella@sociomantic.com>',
-    vendor = 'Sociomantic Labs GmbH',
+    vendor = 'dunnhumby Germany GmbH',
     license = 'BSL-1.0',
     deb_suggests = ['dmd-bin', 'dmd1'],
 )
